@@ -1,0 +1,82 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version'
+        required: true
+        type: string
+
+jobs:
+  publish:
+    name: Build and Publish NuGet Package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    defaults:
+      run:
+        shell: pwsh
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: 1
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore `
+            src/XperienceCommunity.FormClone/XperienceCommunity.FormClone.csproj `
+            --locked-mode
+
+      - name: Build
+        run: |
+          dotnet build `
+            src/XperienceCommunity.FormClone/XperienceCommunity.FormClone.csproj `
+            --configuration Release `
+            --no-restore
+
+      - name: Pack
+        run: |
+          $version = if ($env:VERSION_INPUT) {
+            $env:VERSION_INPUT
+          } elseif ($env:GITHUB_REF -match 'refs/tags/v(.+)') {
+            $matches[1]
+          } else {
+            "1.0.0-ci.$($env:GITHUB_RUN_NUMBER)"
+          }
+          dotnet pack `
+            src/XperienceCommunity.FormClone/XperienceCommunity.FormClone.csproj `
+            --configuration Release `
+            --no-build `
+            --output ./artifacts `
+            /p:Version=$version
+        env:
+          VERSION_INPUT: ${{ github.event.inputs.version }}
+
+      - name: Publish to GitHub Packages
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg `
+            --source "https://nuget.pkg.github.com/BiQ-Bluesoft/index.json" `
+            --api-key ${{ secrets.GITHUB_TOKEN }} `
+            --skip-duplicate
+
+      - name: Publish to NuGet.org
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg `
+            --source "https://api.nuget.org/v3/index.json" `
+            --api-key ${{ secrets.NUGET_API_KEY }} `
+            --skip-duplicate
