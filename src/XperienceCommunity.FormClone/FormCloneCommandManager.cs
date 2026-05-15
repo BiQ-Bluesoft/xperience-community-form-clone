@@ -1,8 +1,10 @@
 using System.Text.Json;
 
 using CMS.DataEngine;
+using CMS.EmailMarketing.Internal;
 using CMS.FormEngine;
 using CMS.OnlineForms;
+using CMS.OnlineForms.Internal;
 
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Admin.Base.Forms.Internal;
@@ -14,11 +16,13 @@ internal sealed class FormCloneCommandManager : IFormCloneCommandManager
 {
     private readonly IFormItemCollectionProvider formItemCollectionProvider;
     private readonly IFormDataBinder formDataBinder;
+    private readonly IAutoresponderProcessHelper autoresponderProcessHelper;
 
-    public FormCloneCommandManager(IFormItemCollectionProvider formItemCollectionProvider, IFormDataBinder formDataBinder)
+    public FormCloneCommandManager(IFormItemCollectionProvider formItemCollectionProvider, IFormDataBinder formDataBinder, IAutoresponderProcessHelper autoresponderProcessHelper)
     {
         this.formItemCollectionProvider = formItemCollectionProvider;
         this.formDataBinder = formDataBinder;
+        this.autoresponderProcessHelper = autoresponderProcessHelper;
     }
 
     public async Task<GetContentItemCloneFormItemsCommandResult> GetCloneFormItems(int formId, CancellationToken ct = default)
@@ -79,5 +83,31 @@ internal sealed class FormCloneCommandManager : IFormCloneCommandManager
         clonedForm.FormAccess = originalForm.FormAccess;
         clonedForm.FormReportFields = originalForm.FormReportFields;
         await BizFormInfo.Provider.SetAsync(clonedForm);
+
+        await CloneAutoresponder(originalForm, clonedForm);
+    }
+
+    private async Task CloneAutoresponder(BizFormInfo originalForm, BizFormInfo clonedForm)
+    {
+        var automationProcess = await autoresponderProcessHelper.GetAutomationProcess(originalForm);
+        if (automationProcess is null)
+        {
+            return;
+        }
+
+        var emailSource = await autoresponderProcessHelper.GetEmailSource(automationProcess);
+        if (emailSource == AutoresponderEmailSource.None)
+        {
+            return;
+        }
+
+        var selectedEmailGuid = Guid.Empty;
+        if (emailSource == AutoresponderEmailSource.Emails)
+        {
+            var selectedEmail = await autoresponderProcessHelper.GetSelectedEmail(automationProcess);
+            selectedEmailGuid = selectedEmail?.EmailConfigurationGUID ?? Guid.Empty;
+        }
+
+        await autoresponderProcessHelper.CreateAutomationProcess(clonedForm, selectedEmailGuid);
     }
 }
