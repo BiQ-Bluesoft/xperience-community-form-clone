@@ -4,6 +4,7 @@
 # git config --global core.autocrlf true
 
 *                   text=auto
+*                   text eol=crlf
 
 *.cs                text diff=csharp
 *.cshtml            text diff=html
