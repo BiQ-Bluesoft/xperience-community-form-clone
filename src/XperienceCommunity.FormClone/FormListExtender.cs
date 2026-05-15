@@ -1,6 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
-
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;

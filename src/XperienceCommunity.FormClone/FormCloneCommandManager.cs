@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 using CMS.DataEngine;
 using CMS.FormEngine;
@@ -28,7 +23,7 @@ internal sealed class FormCloneCommandManager : IFormCloneCommandManager
 
     public async Task<GetContentItemCloneFormItemsCommandResult> GetCloneFormItems(int formId, CancellationToken ct = default)
     {
-        var form = BizFormInfo.Provider.Get(formId)
+        var form = await BizFormInfo.Provider.GetAsync(formId, ct)
             ?? throw new InvalidOperationException($"Form with ID {formId} not found.");
 
         var model = new CloneFormModel { FormDisplayName = $"{form.FormDisplayName} (copy)" };
@@ -40,7 +35,7 @@ internal sealed class FormCloneCommandManager : IFormCloneCommandManager
 
     public async Task Clone(int formId, Dictionary<string, JsonElement> formData, CancellationToken ct = default)
     {
-        var originalForm = BizFormInfo.Provider.Get(formId)
+        var originalForm = await BizFormInfo.Provider.GetAsync(formId, ct)
             ?? throw new InvalidOperationException($"Form with ID {formId} not found.");
 
         var model = new CloneFormModel();
