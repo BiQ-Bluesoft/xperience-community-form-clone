@@ -42,11 +42,11 @@ builder.Services.AddXperienceCommunityFormClone();
 
 ## Full Instructions
 
-View the [Usage Guide](./docs/Usage-Guide.md) for more detailed instructions.
+View the [Usage Guide](https://github.com/BiQ-Bluesoft/xperience-community-form-clone/blob/main/docs/Usage-Guide.md) for more detailed instructions.
 
 ## Contributing
 
-Instructions and technical details for contributing to this project can be found in [Contributing Setup](./docs/Contributing-Setup.md).
+Instructions and technical details for contributing to this project can be found in [Contributing Setup](https://github.com/BiQ-Bluesoft/xperience-community-form-clone/blob/main/docs/Contributing-Setup.md).
 
 ## License
 
