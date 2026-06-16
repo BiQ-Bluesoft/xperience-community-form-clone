@@ -1146,7 +1146,7 @@
       },
       "Kentico.Xperience.WebApp": {
         "type": "CentralTransitive",
-        "requested": "[31.2.1, )",
+        "requested": "[31.5.4, )",
         "resolved": "31.5.4",
         "contentHash": "qyR3hGklL6fUNhx849NmhRBZlIualy5U8FapddhdqpIetce2+zdIYdNsdsuABUJyg1EVN9LG38zW2AfBip93AA==",
         "dependencies": {
