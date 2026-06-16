@@ -51,4 +51,3 @@ Instructions and technical details for contributing to this project can be found
 ## License
 
 Distributed under the MIT License. See [`LICENSE.md`](./LICENSE.md) for more information.
-

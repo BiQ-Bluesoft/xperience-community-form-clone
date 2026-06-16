@@ -43,9 +43,9 @@ internal sealed class FormListExtender : PageExtender<FormList>
         Page.PageConfiguration.TableActions.AddActionWithCustomComponent(
             new AddActionWithCustomComponentParameters(
                 "Clone form",
-                new ContentItemCloneComponent
+                new ReusableContentItemCloneComponent
                 {
-                    Properties = new ContentItemCloneProperties
+                    Properties = new ReusableContentItemCloneProperties
                     {
                         CloneCommandName = nameof(Clone),
                         GetCloneFormItemsCommandName = nameof(GetFormItemsForClone),
