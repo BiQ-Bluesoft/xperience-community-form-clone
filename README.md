@@ -14,12 +14,13 @@ The clone dialog pre-fills the new form's display name as `{original name} (copy
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
+| >= 31.5.4         | 2.0.0           |
 | >= 31.2.0         | 1.0.0           |
 
 ### Dependencies
 
 - [ASP.NET Core 8.0+](https://dotnet.microsoft.com/en-us/download)
-- [Xperience by Kentico >= 31.2.0](https://docs.kentico.com)
+- [Xperience by Kentico >= 31.5.4](https://docs.kentico.com)
 
 ## Package Installation
 
